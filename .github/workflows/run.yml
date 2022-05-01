@@ -8,6 +8,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flag: ["VARIANT_ONE", "VARIANT_TWO"]
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -15,11 +18,6 @@ jobs:
         python-version: '3.x'
     - run: |
         pip install platformio
-        platformio --upgrade dev
-    - name: Works
-      run: |
-        env PLATFORMIO_BUILD_FLAGS="-DTHIS_IS_A_TEST=1" pio run
-    - name: Does not
-      run: |
-        env PLATFORMIO_SRC_BUILD_FLAGS="-DTHIS_IS_A_TEST=1" pio run
-
+        platformio upgrade --dev
+    - run: |
+        env PLATFORMIO_BUILD_FLAGS="-DSELECTED_VARIANT=${{ matrix.flag }}" platformio run
